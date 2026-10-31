@@ -3,6 +3,7 @@ package com.manish.exam_backend.config;
 import com.manish.exam_backend.model.*;
 import com.manish.exam_backend.repository.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,20 +12,24 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepo;
     private final ExamRepository examRepo;
     private final QuestionRepository questionRepo;
+    private final PasswordEncoder passwordEncoder;
 
     public DataLoader(UserRepository userRepo, ExamRepository examRepo,
-                      QuestionRepository questionRepo) {
+                      QuestionRepository questionRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.examRepo = examRepo;
         this.questionRepo = questionRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
         if (userRepo.count() == 0) {
-            // Plain passwords only for now. We will hash them in Step 3.
-            userRepo.save(new User(null, "Admin", "admin@exam.com", "admin123", Role.ADMIN));
-            userRepo.save(new User(null, "Student One", "student@exam.com", "student123", Role.STUDENT));
+            // Passwords are saved as BCrypt hashes, not plain text.
+            userRepo.save(new User(null, "Admin", "admin@exam.com",
+                    passwordEncoder.encode("admin123"), Role.ADMIN));
+            userRepo.save(new User(null, "Student One", "student@exam.com",
+                    passwordEncoder.encode("student123"), Role.STUDENT));
 
             Exam exam = new Exam();
             exam.setTitle("Java Basics Test");
