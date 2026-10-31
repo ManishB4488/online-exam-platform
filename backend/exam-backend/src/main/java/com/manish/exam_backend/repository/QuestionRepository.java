@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByExamId(Long examId);
+    long countByExamId(Long examId);
+    void deleteByExamId(Long examId);
 }
