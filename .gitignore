@@ -1,0 +1,7 @@
+backend/exam-backend/target/
+backend/exam-backend/data/
+frontend/node_modules/
+frontend/dist/
+.idea/
+.vscode/
+*.log
