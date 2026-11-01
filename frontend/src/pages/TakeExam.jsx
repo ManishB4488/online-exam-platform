@@ -14,7 +14,7 @@ function formatTime(total) {
 function ExamScreen({ exam }) {
   const navigate = useNavigate()
   const [answers, setAnswers] = useState({}) // { questionId: "A" }
-  const [secondsLeft, setSecondsLeft] = useState(exam.durationMinutes * 60)
+  const [secondsLeft, setSecondsLeft] = useState(exam.secondsLeft)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const submitRef = useRef(null)
@@ -129,7 +129,7 @@ export default function TakeExam() {
           // The timer ends exactly "duration" minutes after the exam is opened
           setExam({
             ...res.data,
-            endsAt: Date.now() + res.data.durationMinutes * 60 * 1000,
+            endsAt: Date.now() + res.data.secondsLeft * 1000,
           })
         }
       })

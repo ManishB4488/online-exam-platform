@@ -1,17 +1,19 @@
 package com.manish.exam_backend.service;
 
-import com.manish.exam_backend.dto.ExamRequest;
-import com.manish.exam_backend.dto.ExamResponse;
-import com.manish.exam_backend.model.Exam;
-import com.manish.exam_backend.repository.ExamRepository;
-import com.manish.exam_backend.repository.QuestionRepository;
-import com.manish.exam_backend.repository.ResultRepository;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import com.manish.exam_backend.dto.ExamRequest;
+import com.manish.exam_backend.dto.ExamResponse;
+import com.manish.exam_backend.model.Exam;
+import com.manish.exam_backend.repository.ExamAttemptRepository;
+import com.manish.exam_backend.repository.ExamRepository;
+import com.manish.exam_backend.repository.QuestionRepository;
+import com.manish.exam_backend.repository.ResultRepository;
 
 @Service
 public class ExamService {
@@ -19,12 +21,14 @@ public class ExamService {
     private final ExamRepository examRepo;
     private final QuestionRepository questionRepo;
     private final ResultRepository resultRepo;
+    private final ExamAttemptRepository attemptRepo;
 
     public ExamService(ExamRepository examRepo, QuestionRepository questionRepo,
-                       ResultRepository resultRepo) {
+                       ResultRepository resultRepo, ExamAttemptRepository attemptRepo) {
         this.examRepo = examRepo;
         this.questionRepo = questionRepo;
         this.resultRepo = resultRepo;
+        this.attemptRepo = attemptRepo;
     }
 
     public List<ExamResponse> listAll() {
@@ -55,6 +59,7 @@ public class ExamService {
     public void delete(Long id) {
         Exam exam = findExam(id);
         // Delete the things that belong to the exam first
+        attemptRepo.deleteByExamId(id);
         resultRepo.deleteByExamId(id);
         questionRepo.deleteByExamId(id);
         examRepo.delete(exam);
