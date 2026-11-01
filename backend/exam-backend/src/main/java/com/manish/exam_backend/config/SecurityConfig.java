@@ -42,6 +42,7 @@ public class SecurityConfig {
     .requestMatchers("/error").permitAll()
     .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
     .requestMatchers("/api/admin/**").hasRole("ADMIN")
+    .requestMatchers("/api/student/**").hasRole("STUDENT")
     .anyRequest().authenticated())
             .exceptionHandling(e -> e.authenticationEntryPoint(
                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
