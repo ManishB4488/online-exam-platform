@@ -4,7 +4,9 @@ export function errorMessage(err) {
   }
   const { status, data } = err.response
   if (status === 400 && data?.fields) {
-    return Object.values(data.fields).join('. ')
+    return Object.entries(data.fields)
+      .map(([field, message]) => `${field}: ${message}`)
+      .join('. ')
   }
   if (status === 401) return 'Wrong email or password.'
   if (status === 403) return 'You are not allowed to do this.'

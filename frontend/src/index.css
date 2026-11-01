@@ -135,3 +135,164 @@ td {
   padding: 10px;
   border-bottom: 1px solid #e3e7f0;
 }
+/* Navbar links */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.nav-links {
+  display: flex;
+  gap: 16px;
+}
+.nav-links a {
+  color: #fff;
+}
+
+/* Link that looks like a button */
+.btn-link {
+  display: inline-block;
+  text-decoration: none;
+}
+.btn-tight {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+
+/* Exam screen */
+.exam-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.timer {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: #fff;
+  color: #16213e;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+.timer-low {
+  background: #b3261e;
+  color: #fff;
+}
+.question {
+  margin-bottom: 16px;
+}
+.q-text {
+  margin-top: 0;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 400;
+  margin: 8px 0;
+  cursor: pointer;
+}
+.option input {
+  width: auto;
+  margin: 0;
+}
+
+/* Result page */
+.score-card {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.score {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+.review {
+  margin-bottom: 12px;
+  border-left: 6px solid #d6dbe7;
+}
+.review p {
+  margin: 4px 0;
+}
+.review.right {
+  border-left-color: #2e7d32;
+}
+.review.wrong {
+  border-left-color: #b3261e;
+}
+.badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.right .badge {
+  color: #2e7d32;
+}
+.wrong .badge {
+  color: #b3261e;
+}
+/* Text areas and drop-downs look like the other inputs */
+textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #b9c0d0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fff;
+}
+textarea:focus,
+select:focus {
+  outline: 2px solid #2f5bea;
+  outline-offset: 1px;
+}
+
+/* Admin pages */
+.page-wide {
+  max-width: 1000px;
+}
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.btn-secondary {
+  background: #fff;
+  color: #16213e;
+  border: 1px solid #b9c0d0;
+}
+.btn-danger {
+  background: #b3261e;
+}
+.opt-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 12px;
+}
+.opt-list li {
+  padding: 3px 0;
+}
+.opt-correct {
+  color: #2e7d32;
+  font-weight: 600;
+}
+.filter {
+  max-width: 320px;
+  margin-bottom: 12px;
+}

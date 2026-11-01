@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../api/client'
 import { errorMessage } from '../api/errors'
 import Navbar from '../components/Navbar'
@@ -43,6 +44,7 @@ export default function StudentHome() {
                   <th>Exam</th>
                   <th>Duration</th>
                   <th>Questions</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -51,12 +53,16 @@ export default function StudentHome() {
                     <td>{e.title}</td>
                     <td>{e.durationMinutes} min</td>
                     <td>{e.questionCount}</td>
+                    <td>
+                      <Link className="btn btn-link btn-tight" to={`/student/exams/${e.id}`}>
+                        Start exam
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
-          <p className="muted">Taking an exam comes in Step 7.</p>
         </div>
       </main>
     </>
