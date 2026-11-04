@@ -3,6 +3,7 @@ package com.manish.exam_backend.config;
 import com.manish.exam_backend.repository.UserRepository;
 import com.manish.exam_backend.security.JwtAuthFilter;
 import com.manish.exam_backend.security.JwtService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -39,11 +40,12 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-    .requestMatchers("/error").permitAll()
-    .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-    .requestMatchers("/api/student/**").hasRole("STUDENT")
-    .anyRequest().authenticated())
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/student/**").hasRole("STUDENT")
+                .anyRequest().authenticated())
             .exceptionHandling(e -> e.authenticationEntryPoint(
                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .addFilterBefore(new JwtAuthFilter(jwtService, userRepo),
@@ -52,11 +54,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Lets the React app (Vite runs on port 5173) call this backend
+    // Which web addresses may call this backend (separate several with commas)
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource(
+            @Value("${app.cors.allowed-origins:http://localhost:5173}") String[] allowedOrigins) {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of(allowedOrigins));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

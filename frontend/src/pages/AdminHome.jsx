@@ -44,9 +44,14 @@ export default function AdminHome() {
       <main className="page">
         <div className="page-head">
           <h1>Admin panel, {user.name}</h1>
-          <Link className="btn btn-link" to="/admin/exams/new">
-            New exam
-          </Link>
+          <div className="actions">
+            <Link className="btn btn-link btn-secondary" to="/admin/exams/import">
+              Import from PDF
+            </Link>
+            <Link className="btn btn-link" to="/admin/exams/new">
+              New exam
+            </Link>
+          </div>
         </div>
 
         <div className="card">

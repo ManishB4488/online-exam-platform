@@ -4,6 +4,7 @@ import useAuth from './context/useAuth'
 import AdminHome from './pages/AdminHome'
 import AllResults from './pages/AllResults'
 import ExamForm from './pages/ExamForm'
+import ImportExam from './pages/ImportExam'
 import Login from './pages/Login'
 import ManageQuestions from './pages/ManageQuestions'
 import MyResults from './pages/MyResults'
@@ -37,6 +38,7 @@ export default function App() {
       <Route element={<ProtectedRoute role="ADMIN" />}>
         <Route path="/admin" element={<AdminHome />} />
         <Route path="/admin/exams/new" element={<ExamForm />} />
+        <Route path="/admin/exams/import" element={<ImportExam />} />
         <Route path="/admin/exams/:id/edit" element={<ExamForm />} />
         <Route path="/admin/exams/:id/questions" element={<ManageQuestions />} />
         <Route path="/admin/results" element={<AllResults />} />

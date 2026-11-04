@@ -3,7 +3,7 @@ import axios from 'axios'
 export const AUTH_KEY = 'auth'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8080',
 })
 
 // Add the token to every request
