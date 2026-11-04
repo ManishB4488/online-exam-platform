@@ -55,7 +55,12 @@ online-exam/
 ```
 
 ## Run it on your computer
-
+### With Docker
+```bash
+copy .env.example .env      # then set DB_PASSWORD and JWT_SECRET in .env
+docker compose up -d --build
+```
+Open http://localhost:3000
 You need Java 21, Maven and Node.js 18 or newer.
 
 **1. Backend**
