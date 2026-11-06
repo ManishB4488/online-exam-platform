@@ -1,4 +1,3 @@
-@'
 FROM jenkins/jenkins:lts-jdk21
 
 USER root
@@ -20,4 +19,3 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
  && rm -rf /var/lib/apt/lists/*
 
 USER jenkins
-'@ | Set-Content -Encoding ASCII jenkins\Dockerfile
