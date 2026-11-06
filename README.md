@@ -126,3 +126,4 @@ DevOps work planned for this project: Docker and Docker Compose, a Jenkins CI/CD
 ## Author
 
 Manish Bisht
+Built and tested automatically with Jenkins.
