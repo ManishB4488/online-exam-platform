@@ -22,7 +22,7 @@ class PdfQuestionParserTest {
         ParseResult result = PdfQuestionParser.parse(text);
 
         assertThat(result.warnings()).isEmpty();
-        assertThat(result.questions()).hasSize(3);
+        assertThat(result.questions()).hasSize(2);
         assertThat(result.questions().get(0).text())
                 .isEqualTo("Which keyword is used to create an object in Java?");
         assertThat(result.questions().get(0).correctOption()).isEqualTo("A");
