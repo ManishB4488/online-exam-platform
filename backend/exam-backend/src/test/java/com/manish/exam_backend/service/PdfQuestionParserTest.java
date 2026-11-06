@@ -1,9 +1,9 @@
 package com.manish.exam_backend.service;
 
-import com.manish.exam_backend.service.PdfQuestionParser.ParseResult;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.manish.exam_backend.service.PdfQuestionParser.ParseResult;
 
 class PdfQuestionParserTest {
 
@@ -22,7 +22,7 @@ class PdfQuestionParserTest {
         ParseResult result = PdfQuestionParser.parse(text);
 
         assertThat(result.warnings()).isEmpty();
-        assertThat(result.questions()).hasSize(2);
+        assertThat(result.questions()).hasSize(3);
         assertThat(result.questions().get(0).text())
                 .isEqualTo("Which keyword is used to create an object in Java?");
         assertThat(result.questions().get(0).correctOption()).isEqualTo("A");
