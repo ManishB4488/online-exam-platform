@@ -1,0 +1,18 @@
+@'
+services:
+  jenkins:
+    build: .
+    container_name: jenkins
+    user: root
+    ports:
+      - "8081:8080"
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - JAVA_OPTS=-Duser.timezone=Asia/Kolkata
+    restart: unless-stopped
+
+volumes:
+  jenkins-home:
+'@ | Set-Content -Encoding ASCII jenkins\docker-compose.yml
