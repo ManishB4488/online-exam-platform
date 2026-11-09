@@ -18,4 +18,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
  && apt-get install -y --no-install-recommends nodejs \
  && rm -rf /var/lib/apt/lists/*
 
+# Ansible, to deploy the app (in its own virtual environment, so it cannot clash with Debian's Python)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends python3 python3-venv \
+ && python3 -m venv /opt/ansible \
+ && /opt/ansible/bin/pip install --no-cache-dir ansible-core \
+ && ln -s /opt/ansible/bin/ansible-playbook /usr/local/bin/ansible-playbook \
+ && ln -s /opt/ansible/bin/ansible /usr/local/bin/ansible \
+ && rm -rf /var/lib/apt/lists/*
+
 USER jenkins

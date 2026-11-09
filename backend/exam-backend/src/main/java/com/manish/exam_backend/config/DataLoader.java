@@ -2,6 +2,7 @@ package com.manish.exam_backend.config;
 
 import com.manish.exam_backend.model.*;
 import com.manish.exam_backend.repository.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -9,21 +10,66 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataLoader implements CommandLineRunner {
 
+    static final int MIN_ADMIN_PASSWORD_LENGTH = 12;
+
     private final UserRepository userRepo;
     private final ExamRepository examRepo;
     private final QuestionRepository questionRepo;
     private final PasswordEncoder passwordEncoder;
+    private final boolean seedDemoData;
+    private final String adminEmail;
+    private final String adminPassword;
 
     public DataLoader(UserRepository userRepo, ExamRepository examRepo,
-                      QuestionRepository questionRepo, PasswordEncoder passwordEncoder) {
+                      QuestionRepository questionRepo, PasswordEncoder passwordEncoder,
+                      // true on your computer: creates the sample accounts and exam.
+                      // The production deployment sets APP_SEED_DEMO_DATA=false.
+                      @Value("${app.seed-demo-data:true}") boolean seedDemoData,
+                      // used only when the demo data is switched off
+                      @Value("${app.admin.email:admin@exam.com}") String adminEmail,
+                      @Value("${app.admin.password:}") String adminPassword) {
         this.userRepo = userRepo;
         this.examRepo = examRepo;
         this.questionRepo = questionRepo;
         this.passwordEncoder = passwordEncoder;
+        this.seedDemoData = seedDemoData;
+        this.adminEmail = adminEmail;
+        this.adminPassword = adminPassword;
     }
 
     @Override
     public void run(String... args) {
+        if (seedDemoData) {
+            loadDemoData();
+        } else {
+            createAdminFromSettings();
+        }
+
+        System.out.println("=== Data check: users=" + userRepo.count()
+                + ", exams=" + examRepo.count()
+                + ", questions=" + questionRepo.count() + " ===");
+    }
+
+    // Production: one admin account whose password comes from a secret, nothing else.
+    // It is safe to run on every start: an existing admin is never changed.
+    void createAdminFromSettings() {
+        if (adminPassword == null || adminPassword.isBlank()) {
+            System.out.println("=== No demo data and no APP_ADMIN_PASSWORD: no admin account was created ===");
+            return;
+        }
+        if (adminPassword.length() < MIN_ADMIN_PASSWORD_LENGTH) {
+            throw new IllegalStateException("APP_ADMIN_PASSWORD must have at least "
+                    + MIN_ADMIN_PASSWORD_LENGTH + " characters");
+        }
+        if (userRepo.existsByEmail(adminEmail)) {
+            return;
+        }
+        userRepo.save(new User(null, "Administrator", adminEmail,
+                passwordEncoder.encode(adminPassword), Role.ADMIN));
+        System.out.println("=== Admin account created for " + adminEmail + " ===");
+    }
+
+    void loadDemoData() {
         if (userRepo.count() == 0) {
             // Passwords are saved as BCrypt hashes, not plain text.
             userRepo.save(new User(null, "Admin", "admin@exam.com",
@@ -57,9 +103,5 @@ public class DataLoader implements CommandLineRunner {
             q2.setExam(exam);
             questionRepo.save(q2);
         }
-
-        System.out.println("=== Data check: users=" + userRepo.count()
-                + ", exams=" + examRepo.count()
-                + ", questions=" + questionRepo.count() + " ===");
     }
 }

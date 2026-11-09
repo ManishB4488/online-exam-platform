@@ -102,7 +102,7 @@ pipeline {
             }
         }
 
-                stage('Security: secrets in the code') {
+        stage('Security: secrets in the code') {
             steps {
                 script {
                     def repoUrl = env.GIT_URL ?: 'https://github.com/ManishB4488/online-exam-platform.git'
@@ -118,6 +118,30 @@ pipeline {
         stage('Docker: check compose file') {
             steps {
                 sh 'docker compose --env-file .env.example config --quiet'
+            }
+        }
+
+        stage('Deploy') {
+            // Only a green build of the main branch is deployed
+            when { expression { env.GIT_BRANCH == 'origin/main' } }
+            environment {
+                // This is the login e-mail of the one admin account. It is not a secret.
+                ADMIN_EMAIL = 'admin@exam.com'
+                IMAGE_TAG = "${env.BUILD_NUMBER}"
+                WEB_PORT = '8090'
+            }
+            steps {
+                // The secrets live in Jenkins (Manage Jenkins > Credentials), not in the code.
+                // Jenkins hides their values in the log.
+                withCredentials([
+                    string(credentialsId: 'exam-db-password', variable: 'DB_PASSWORD'),
+                    string(credentialsId: 'exam-jwt-secret', variable: 'JWT_SECRET'),
+                    string(credentialsId: 'exam-admin-password', variable: 'ADMIN_PASSWORD')
+                ]) {
+                    dir('deploy/ansible') {
+                        sh 'ansible-playbook deploy.yml'
+                    }
+                }
             }
         }
     }
