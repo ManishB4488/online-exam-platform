@@ -107,7 +107,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\"}[1m]))",
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",uri!~\"/actuator.*\"}[1m]))",
           "legendFormat": "",
           "refId": "A"
         }
@@ -140,7 +140,8 @@
         "colorMode": "value",
         "graphMode": "area",
         "textMode": "auto"
-      }
+      },
+      "description": "Health checks and Prometheus scrapes (/actuator) are not counted."
     },
     {
       "id": 3,
@@ -162,7 +163,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",status=~\"5..\"}[1m])) or vector(0)",
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",uri!~\"/actuator.*\",status=~\"5..\"}[1m])) or vector(0)",
           "legendFormat": "",
           "refId": "A"
         }
@@ -199,7 +200,8 @@
         "colorMode": "value",
         "graphMode": "area",
         "textMode": "auto"
-      }
+      },
+      "description": "Health checks and Prometheus scrapes (/actuator) are not counted."
     },
     {
       "id": 4,
@@ -259,7 +261,7 @@
       "id": 5,
       "type": "timeseries",
       "title": "Requests per second by status",
-      "description": "",
+      "description": "Health checks and Prometheus scrapes (/actuator) are not counted.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -276,7 +278,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (status) (rate(http_server_requests_seconds_count{job=\"exam-backend\"}[1m]))",
+          "expr": "sum by (status) (rate(http_server_requests_seconds_count{job=\"exam-backend\",uri!~\"/actuator.*\"}[1m]))",
           "legendFormat": "{{status}}",
           "refId": "A"
         }
@@ -306,7 +308,7 @@
       "id": 6,
       "type": "timeseries",
       "title": "Errors per second",
-      "description": "4xx are wrong requests (for example a wrong password). 5xx are failures inside the backend.",
+      "description": "4xx are wrong requests (for example a wrong password). 5xx are failures inside the backend. Health checks and Prometheus scrapes (/actuator) are not counted.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -323,7 +325,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",status=~\"4..\"}[1m])) or vector(0)",
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",uri!~\"/actuator.*\",status=~\"4..\"}[1m])) or vector(0)",
           "legendFormat": "4xx (client errors)",
           "refId": "A"
         },
@@ -332,7 +334,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",status=~\"5..\"}[1m])) or vector(0)",
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",uri!~\"/actuator.*\",status=~\"5..\"}[1m])) or vector(0)",
           "legendFormat": "5xx (server errors)",
           "refId": "B"
         }
@@ -362,7 +364,7 @@
       "id": 7,
       "type": "timeseries",
       "title": "Response time",
-      "description": "",
+      "description": "Health checks and Prometheus scrapes (/actuator) are not counted.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -379,7 +381,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_sum{job=\"exam-backend\"}[1m])) / sum(rate(http_server_requests_seconds_count{job=\"exam-backend\"}[1m]))",
+          "expr": "sum(rate(http_server_requests_seconds_sum{job=\"exam-backend\",uri!~\"/actuator.*\"}[1m])) / sum(rate(http_server_requests_seconds_count{job=\"exam-backend\",uri!~\"/actuator.*\"}[1m]))",
           "legendFormat": "average",
           "refId": "A"
         },
@@ -388,7 +390,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_requests_seconds_bucket{job=\"exam-backend\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_requests_seconds_bucket{job=\"exam-backend\",uri!~\"/actuator.*\"}[5m])))",
           "legendFormat": "95th percentile",
           "refId": "B"
         }
@@ -418,7 +420,7 @@
       "id": 8,
       "type": "timeseries",
       "title": "Slowest endpoints (average)",
-      "description": "",
+      "description": "Health checks and Prometheus scrapes (/actuator) are not counted.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -435,7 +437,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "topk(5, sum by (uri) (rate(http_server_requests_seconds_sum{job=\"exam-backend\"}[5m])) / sum by (uri) (rate(http_server_requests_seconds_count{job=\"exam-backend\"}[5m])))",
+          "expr": "topk(5, sum by (uri) (rate(http_server_requests_seconds_sum{job=\"exam-backend\",uri!~\"/actuator.*\"}[5m])) / sum by (uri) (rate(http_server_requests_seconds_count{job=\"exam-backend\",uri!~\"/actuator.*\"}[5m])))",
           "legendFormat": "{{uri}}",
           "refId": "A"
         }
