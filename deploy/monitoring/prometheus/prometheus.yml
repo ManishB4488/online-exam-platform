@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # The Spring Boot backend, inside the Docker network
+  - job_name: exam-backend
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['backend:8080']
+        labels:
+          application: exam-backend
+
+  # Prometheus watching itself
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

@@ -4,7 +4,7 @@
 #   ansible-playbook deploy.yml
 #
 # It needs these environment variables (Jenkins fills them from its credentials):
-#   DB_PASSWORD, JWT_SECRET, ADMIN_PASSWORD   secrets
+#   DB_PASSWORD, JWT_SECRET, ADMIN_PASSWORD, GRAFANA_ADMIN_PASSWORD   secrets
 #   ADMIN_EMAIL, IMAGE_TAG, WEB_PORT          settings (WEB_PORT is optional)
 - name: Deploy the Online Exam Platform
   hosts: exam_server
@@ -20,6 +20,7 @@
       DB_PASSWORD: "{{ lookup('env', 'DB_PASSWORD') }}"
       JWT_SECRET: "{{ lookup('env', 'JWT_SECRET') }}"
       ADMIN_PASSWORD: "{{ lookup('env', 'ADMIN_PASSWORD') }}"
+      GRAFANA_ADMIN_PASSWORD: "{{ lookup('env', 'GRAFANA_ADMIN_PASSWORD') }}"
       ADMIN_EMAIL: "{{ lookup('env', 'ADMIN_EMAIL') }}"
       IMAGE_TAG: "{{ image_tag }}"
       WEB_PORT: "{{ web_port }}"
@@ -31,17 +32,20 @@
           - compose_env.DB_PASSWORD | length >= 16
           - compose_env.JWT_SECRET | length >= 32
           - compose_env.ADMIN_PASSWORD | length >= 12
+          - compose_env.GRAFANA_ADMIN_PASSWORD | length >= 12
           - compose_env.ADMIN_EMAIL | length > 0
           - image_tag | length > 0
         fail_msg: >-
           A secret is missing or too short. Needed: DB_PASSWORD (16+ characters),
-          JWT_SECRET (32+), ADMIN_PASSWORD (12+), ADMIN_EMAIL and IMAGE_TAG.
+          JWT_SECRET (32+), ADMIN_PASSWORD (12+), GRAFANA_ADMIN_PASSWORD (12+), ADMIN_EMAIL and IMAGE_TAG.
 
     - name: Check that the images built by this pipeline exist
       ansible.builtin.command: "docker image inspect {{ item }}:{{ image_tag }}"
       loop:
         - exam-backend
         - exam-frontend
+        - exam-prometheus
+        - exam-grafana
       changed_when: false
 
     - name: Validate the compose file
@@ -73,6 +77,19 @@
       environment: "{{ compose_env }}"
       changed_when: false
 
+    - name: Smoke test - Prometheus can read the backend metrics
+      ansible.builtin.shell: >-
+        docker compose -f {{ compose_file }} -p {{ project_name }}
+        exec -T prometheus wget -qO-
+        'http://127.0.0.1:9090/api/v1/query?query=up%7Bjob%3D%22exam-backend%22%7D'
+        | grep -qF ',"1"]'
+      environment: "{{ compose_env }}"
+      register: prometheus_check
+      until: prometheus_check.rc == 0
+      retries: 12
+      delay: 5
+      changed_when: false
+
     - name: Show the running containers
       ansible.builtin.command: >-
         docker compose -f {{ compose_file }} -p {{ project_name }} ps
@@ -85,3 +102,4 @@
         msg:
           - "{{ compose_ps.stdout_lines }}"
           - "Deployed version {{ image_tag }} on http://localhost:{{ web_port }}"
+          - "Grafana: http://localhost:3001 (user admin)   Prometheus: http://localhost:9090"

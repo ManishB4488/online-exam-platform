@@ -85,6 +85,9 @@ pipeline {
             steps {
                 sh 'docker build -t ${BACKEND_IMAGE}:${BUILD_NUMBER} -t ${BACKEND_IMAGE}:latest backend/exam-backend'
                 sh 'docker build -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} -t ${FRONTEND_IMAGE}:latest frontend'
+                // Monitoring images (the settings are baked in, so the deployment needs no host files)
+                sh 'docker build -t exam-prometheus:${BUILD_NUMBER} deploy/monitoring/prometheus'
+                sh 'docker build -t exam-grafana:${BUILD_NUMBER} deploy/monitoring/grafana'
             }
         }
 
@@ -136,7 +139,8 @@ pipeline {
                 withCredentials([
                     string(credentialsId: 'exam-db-password', variable: 'DB_PASSWORD'),
                     string(credentialsId: 'exam-jwt-secret', variable: 'JWT_SECRET'),
-                    string(credentialsId: 'exam-admin-password', variable: 'ADMIN_PASSWORD')
+                    string(credentialsId: 'exam-admin-password', variable: 'ADMIN_PASSWORD'),
+                    string(credentialsId: 'exam-grafana-password', variable: 'GRAFANA_ADMIN_PASSWORD')
                 ]) {
                     dir('deploy/ansible') {
                         sh 'ansible-playbook deploy.yml'
